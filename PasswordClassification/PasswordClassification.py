@@ -23,11 +23,17 @@ def visualize(data):
     plt.title("Class Distribution")
     plt.show()
 
-    len = data.groupby("strength")["password"].apply(lambda x: np.mean(x.str.len())).reset_index()
-    sns.barplot(x="strength", y="password", data= len)
-    plt.tight_layout()
-    plt.title("Average Password Length per Class")
-    plt.show()
+    df_passwords = pd.DataFrame() 
+    df_passwords["strength"] = [0,1,2]
+    df_passwords["length_avg"] = data.groupby("strength")["password"].apply(lambda x: np.mean(x.str.len()))
+    df_passwords["length_std"] = data.groupby("strength")["password"].apply(lambda x: np.std(x.str.len()))
+    df_passwords["digits_avg"] = data.groupby("strength")["password"].apply(lambda x: np.mean(x.str.count(r'\d')))
+    df_passwords["letters_avg"] = data.groupby("strength")["password"].apply(lambda x: np.mean(x.str.count(r'[a-z]|[A-Z]')))
+    df_passwords["special_avg"] = data.groupby("strength")["password"].apply(lambda x: np.mean(x.str.count(r'[!?"@\[\]\.\^\$§\€\+\-\#]')))
+    df_passwords["digits_std"] = data.groupby("strength")["password"].apply(lambda x: np.std(x.str.count(r'\d')))
+    df_passwords["letters_std"] = data.groupby("strength")["password"].apply(lambda x: np.std(x.str.count(r'[a-z]|[A-Z]')))
+    df_passwords["special_std"] = data.groupby("strength")["password"].apply(lambda x: np.std(x.str.count(r'[!?"@\[\]\.\^\$§\€\+\-\#]')))
+    print(df_passwords)
 
 data = load_and_clean()
 visualize(data)
